@@ -3,8 +3,7 @@ from typing import TYPE_CHECKING
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
 from .routers import root, drinks, longdrinks, cocktails
-
-# from .db import create_db_and_tables
+from .db import create_db_and_tables
 
 if TYPE_CHECKING:
     from typing import AsyncGenerator, Any
@@ -13,7 +12,7 @@ if TYPE_CHECKING:
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncGenerator[Any, Any]:
 
-    # create_db_and_tables()
+    create_db_and_tables()
 
     app.include_router(router=root.router, prefix="", tags=["Root"])
     app.include_router(router=drinks.router, prefix="/drinks", tags=["Drinks"])

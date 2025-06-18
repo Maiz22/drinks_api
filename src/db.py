@@ -35,5 +35,6 @@ def create_db_and_tables() -> None:
         SQLModel.metadata.create_all(engine)
     except Exception as e:
         logger.error("Unable to create DB and tables. Please check your DB engine.")
+        logger.error(e)
         return
     logger.info("SQL database and tables created.")
