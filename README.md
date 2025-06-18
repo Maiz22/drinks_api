@@ -6,4 +6,4 @@ pip install -r requirements.txt
 uvicorn src.main:app --reload
 ```
 In your browser go to:
-`http://localhost/docs`
+`http://localhost:8000/docs`
