@@ -7,6 +7,11 @@ class CocktailCreate(SQLModel):
     ingredients: List
 
 
+class CocktailUpdate(SQLModel):
+    name: str
+    ingredients: List
+
+
 class CocktailResponse(SQLModel):
     id: int
     name: str

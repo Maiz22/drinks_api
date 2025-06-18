@@ -20,14 +20,12 @@ class Ingredient(SQLModel, table=True):
 class Cocktail(SQLModel, table=True):
     __tablename__ = "cocktails"
     id: int | None = Field(primary_key=True, nullable=False, default=None)
-    name: str = Field(nullable=False)
+    name: str = Field(nullable=False, unique=True)
     ingredients: List[Ingredient] = Relationship(back_populates="cocktails")
 
 
 class Longdrink(SQLModel, table=True):
     __tablename__ = "longdrinks"
     id: int | None = Field(primary_key=True, nullable=False, default=None)
-    name: str = Field(nullable=False)
-
-
-ingredients: List[Ingredient] = Relationship(back_populates="longdrinks")
+    name: str = Field(nullable=False, unique=True)
+    ingredients: List[Ingredient] = Relationship(back_populates="longdrinks")

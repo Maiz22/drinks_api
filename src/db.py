@@ -26,9 +26,6 @@ def connect_to_postgres_db() -> Engine | None:
     return create_engine(SQL_ALCHEMY_DB_URL, echo=settings.debug)
 
 
-engine = connect_to_postgres_db()
-
-
 def create_db_and_tables() -> None:
     logger.info("Creating SQL database and tables...")
     try:
@@ -38,3 +35,6 @@ def create_db_and_tables() -> None:
         logger.error(e)
         return
     logger.info("SQL database and tables created.")
+
+
+engine = connect_to_postgres_db()
