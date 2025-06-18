@@ -1,7 +1,7 @@
 # Mixer API
 In your terminal:
 ```
-git clone 
+git clone https://github.com/Maiz22/drinks_api.git
 pip install -r requirements.txt
 uvicorn src.main:app --reload
 ```
