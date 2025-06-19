@@ -33,26 +33,3 @@ class Ingredient(SQLModel, table=True):
     cocktail_links: List[CocktailIngredientLink] = Relationship(
         back_populates="ingredient"
     )
-
-
-# class LongdrinkIngredientLink(SQLModel, table=True):
-#    longdrink_id: Optional[int] = Field(
-#        default=None, foreign_key="longdrinks.id", primary_key=True
-#    )
-#    ingredient_id: Optional[int] = Field(
-#        default=None, foreign_key="ingredients.id", primary_key=True
-#    )
-#    amount_ml: float
-#    unit: str = "ml"
-#
-#    longdrink: Optional["Longdrink"] = Relationship(back_populates="ingredient_links")
-#    ingredient: Optional["Ingredient"] = Relationship()
-#
-#
-# class Longdrink(SQLModel, table=True):
-#    __tablename__ = "longdrinks"
-#    id: int | None = Field(primary_key=True, nullable=False, default=None)
-#    name: str = Field(nullable=False, unique=True)
-#    ingredient_link: List["Ingredient"] = Relationship(
-#        back_populates="longdrinks", link_model=LongdrinkIngredientLink
-#    )

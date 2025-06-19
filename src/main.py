@@ -19,9 +19,6 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[Any, Any]:
         router=ingredients.router, prefix="/ingredients", tags=["Ingredients"]
     )
     app.include_router(router=cocktails.router, prefix="/cocktails", tags=["Cocktails"])
-    # app.include_router(
-    #    router=longdrinks.router, prefix="/longdrinks", tags=["Longdrinks"]
-    # )
 
     yield
 

@@ -33,19 +33,3 @@ class CocktailResponse(SQLModel):
     id: int
     name: str
     ingredients: List[IngredientResponse] = []
-
-
-class LongdrinkCreate(SQLModel):
-    name: str
-    ingredients: List
-
-
-class LongdrinkResponse(SQLModel):
-    id: int
-    name: str
-    ingredients: List[IngredientResponse] = []
-
-
-class LongdrinkUpdate(SQLModel):
-    name: str
-    ingredients: List
