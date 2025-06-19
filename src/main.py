@@ -2,7 +2,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
-from .routers import ingredients, root, cocktails
+from .routers import drinks, ingredients, root
 from .db import create_db_and_tables
 
 if TYPE_CHECKING:
@@ -18,7 +18,7 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[Any, Any]:
     app.include_router(
         router=ingredients.router, prefix="/ingredients", tags=["Ingredients"]
     )
-    app.include_router(router=cocktails.router, prefix="/cocktails", tags=["Cocktails"])
+    app.include_router(router=drinks.router, prefix="/drinks", tags=["Cocktails"])
 
     yield
 

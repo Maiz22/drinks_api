@@ -2,9 +2,10 @@ from sqlmodel import SQLModel, Field, Relationship
 from typing import List, Optional
 
 
-class CocktailIngredientLink(SQLModel, table=True):
-    cocktail_id: Optional[int] = Field(
-        default=None, foreign_key="cocktails.id", primary_key=True
+class DrinkIngredientLink(SQLModel, table=True):
+    __tablename__ = "drinkingredientlinks"
+    drink_id: Optional[int] = Field(
+        default=None, foreign_key="drinks.id", primary_key=True
     )
     ingredient_id: Optional[int] = Field(
         default=None, foreign_key="ingredients.id", primary_key=True
@@ -12,17 +13,15 @@ class CocktailIngredientLink(SQLModel, table=True):
     amount_ml: float
     unit: str = "ml"
 
-    cocktail: Optional["Cocktail"] = Relationship(back_populates="ingredient_links")
-    ingredient: Optional["Ingredient"] = Relationship(back_populates="cocktail_links")
+    drink: Optional["Drink"] = Relationship(back_populates="ingredient_links")
+    ingredient: Optional["Ingredient"] = Relationship(back_populates="drink_links")
 
 
-class Cocktail(SQLModel, table=True):
-    __tablename__ = "cocktails"
+class Drink(SQLModel, table=True):
+    __tablename__ = "drinks"
     id: int | None = Field(primary_key=True, nullable=False, default=None)
     name: str = Field(nullable=False, unique=True)
-    ingredient_links: List[CocktailIngredientLink] = Relationship(
-        back_populates="cocktail"
-    )
+    ingredient_links: List[DrinkIngredientLink] = Relationship(back_populates="drink")
 
 
 class Ingredient(SQLModel, table=True):
@@ -30,6 +29,4 @@ class Ingredient(SQLModel, table=True):
     id: int = Field(primary_key=True)
     name: str = Field(nullable=False)
     is_available: bool = Field(nullable=False, default=True)
-    cocktail_links: List[CocktailIngredientLink] = Relationship(
-        back_populates="ingredient"
-    )
+    drink_links: List[DrinkIngredientLink] = Relationship(back_populates="ingredient")

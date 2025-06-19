@@ -19,17 +19,17 @@ class IngredientUpdate(SQLModel):
     is_available: Optional[bool] = True
 
 
-class CocktailCreate(SQLModel):
+class DrinkCreate(SQLModel):
     name: str
     ingredients: List
 
 
-class CocktailUpdate(SQLModel):
+class DrinkUpdate(SQLModel):
     name: str
     ingredients: List
 
 
-class CocktailResponse(SQLModel):
+class DrinkResponse(SQLModel):
     id: int
     name: str
     ingredients: List[IngredientResponse] = []
