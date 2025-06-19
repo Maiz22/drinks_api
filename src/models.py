@@ -27,6 +27,6 @@ class Drink(SQLModel, table=True):
 class Ingredient(SQLModel, table=True):
     __tablename__ = "ingredients"
     id: int = Field(primary_key=True)
-    name: str = Field(nullable=False)
+    name: str = Field(nullable=False, unique=True)
     is_available: bool = Field(nullable=False, default=True)
     drink_links: List[DrinkIngredientLink] = Relationship(back_populates="ingredient")

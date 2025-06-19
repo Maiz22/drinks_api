@@ -1,8 +1,13 @@
 from sqlmodel import Session, select
 from typing import List
+from sqlalchemy.exc import IntegrityError
+import logging
 from ..db import engine
 from ..models import Drink
 from ..schemas import DrinkCreate, DrinkUpdate
+
+
+logger = logging.getLogger("uvicorn")
 
 
 def get_drinks_from_db() -> List[Drink]:
@@ -31,10 +36,14 @@ def get_drink_by_name_from_db(name: str) -> Drink:
 
 def create_drink_in_db(drink: DrinkCreate) -> Drink:
     new_drink = Drink(**drink.model_dump())
-    with Session(engine) as session:
-        session.add(new_drink)
-        session.commit()
-        session.refresh(new_drink)
+    try:
+        with Session(engine) as session:
+            session.add(new_drink)
+            session.commit()
+            session.refresh(new_drink)
+    except IntegrityError as e:
+        logger.error("Element already exists in DB")
+        return None
     return new_drink
 
 
@@ -47,3 +56,9 @@ def update_drink_in_db(drink: Drink, updated_drink: DrinkUpdate) -> Drink:
             session.commit()
             session.refresh(drink)
     return drink
+
+
+def delete_drink_in_db(drink: Drink) -> None:
+    with Session(engine) as session:
+        session.delete(drink)
+        session.commit()
