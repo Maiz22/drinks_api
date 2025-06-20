@@ -1,6 +1,12 @@
 from fastapi import APIRouter, status, HTTPException, Response
 from typing import List
-from ..schemas import DrinkCreate, DrinkResponse, DrinkUpdate
+from ..schemas import (
+    DrinkCreate,
+    DrinkResponse,
+    DrinkUpdate,
+    SimpleDrinkResponse,
+    IngredientInDrinkResponse,
+)
 from ..crud.drinks import (
     get_drinks_from_db,
     get_drink_by_id_from_db,
@@ -17,7 +23,24 @@ router = APIRouter()
 @router.get("/", status_code=status.HTTP_200_OK, response_model=List[DrinkResponse])
 async def get_drinks():
     drinks = get_drinks_from_db()
-    return drinks
+
+    return [
+        DrinkResponse(
+            id=drink.id,
+            name=drink.name,
+            ingredients=[
+                IngredientInDrinkResponse(
+                    id=link.ingredient.id,
+                    name=link.ingredient.name,
+                    is_available=link.ingredient.is_available,
+                    amount_ml=link.amount_ml,
+                    unit=link.unit,
+                )
+                for link in drink.ingredient_links
+            ],
+        )
+        for drink in drinks
+    ]
 
 
 @router.get("/{id}", status_code=status.HTTP_200_OK, response_model=DrinkResponse)
@@ -28,7 +51,20 @@ async def get_drink_by_id(id: int):
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"Drink with id {id} not found",
         )
-    return drink
+    return DrinkResponse(
+        id=drink.id,
+        name=drink.name,
+        ingredients=[
+            IngredientInDrinkResponse(
+                id=link.ingredient.id,
+                name=link.ingredient.name,
+                is_available=link.ingredient.is_available,
+                amount_ml=link.amount_ml,
+                unit=link.unit,
+            )
+            for link in drink.ingredient_links
+        ],
+    )
 
 
 @router.get(
@@ -41,10 +77,25 @@ async def get_drink_by_name(name: str):
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"Drink with name {name} not found",
         )
-    return drink
+    return DrinkResponse(
+        id=drink.id,
+        name=drink.name,
+        ingredients=[
+            IngredientInDrinkResponse(
+                id=link.ingredient.id,
+                name=link.ingredient.name,
+                is_available=link.ingredient.is_available,
+                amount_ml=link.amount_ml,
+                unit=link.unit,
+            )
+            for link in drink.ingredient_links
+        ],
+    )
 
 
-@router.post("/", status_code=status.HTTP_201_CREATED, response_model=DrinkResponse)
+@router.post(
+    "/", status_code=status.HTTP_201_CREATED, response_model=SimpleDrinkResponse
+)
 async def make_drink(new_drink: DrinkCreate):
     created_drink = create_drink_in_db(new_drink)
     if created_drink is None:
@@ -54,7 +105,9 @@ async def make_drink(new_drink: DrinkCreate):
     return created_drink
 
 
-@router.put("/{id}", status_code=status.HTTP_201_CREATED, response_model=DrinkResponse)
+@router.put(
+    "/{id}", status_code=status.HTTP_201_CREATED, response_model=SimpleDrinkResponse
+)
 async def update_drink(id: int, updated_drink: DrinkUpdate):
     drink = get_drink_by_id_from_db(id)
     if drink is None:

@@ -18,6 +18,13 @@ class IngredientUpdate(SQLModel):
     is_available: Optional[bool] = True
 
 
+class IngredientInDrinkResponse(SQLModel):
+    id: int
+    name: str
+    is_available: bool
+    amount_ml: float
+
+
 class DrinkCreate(SQLModel):
     name: str
     ingredients: Optional[List] = []
@@ -28,7 +35,31 @@ class DrinkUpdate(SQLModel):
     ingredients: Optional[List] = []
 
 
+class SimpleDrinkResponse(SQLModel):
+    id: int
+    name: str
+
+
 class DrinkResponse(SQLModel):
     id: int
     name: str
-    ingredients: List[IngredientResponse] = []
+    ingredients: List[IngredientInDrinkResponse]
+
+
+class DrinkIngredientLinkBase(SQLModel):
+    drink_id: int
+    ingredient_id: int
+    amount_ml: float
+    unit: str = "ml"
+
+
+class DrinkIngredientLinkCreate(DrinkIngredientLinkBase):
+    pass
+
+
+class DrinkIngredientLinkResponse(DrinkIngredientLinkBase):
+    pass
+
+
+class DrinkIngredientLinkUpdate(DrinkIngredientLinkBase):
+    pass

@@ -1,9 +1,10 @@
 from sqlmodel import Session, select
+from sqlalchemy.orm import selectinload
 from typing import List
 from sqlalchemy.exc import IntegrityError
 import logging
 from ..db import engine
-from ..models import Drink
+from ..models import Drink, DrinkIngredientLink
 from ..schemas import DrinkCreate, DrinkUpdate
 
 
@@ -12,7 +13,11 @@ logger = logging.getLogger("uvicorn")
 
 def get_drinks_from_db() -> List[Drink]:
     with Session(engine) as session:
-        statement = select(Drink)
+        statement = select(Drink).options(
+            selectinload(Drink.ingredient_links).selectinload(
+                DrinkIngredientLink.ingredient
+            )
+        )
         result = session.exec(statement)
         drinks = result.all()
     return drinks
@@ -20,7 +25,15 @@ def get_drinks_from_db() -> List[Drink]:
 
 def get_drink_by_id_from_db(id: int) -> Drink:
     with Session(engine) as session:
-        statement = select(Drink).where(Drink.id == id)
+        statement = (
+            select(Drink)
+            .where(Drink.id == id)
+            .options(
+                selectinload(Drink.ingredient_links).selectinload(
+                    DrinkIngredientLink.ingredient
+                )
+            )
+        )
         result = session.exec(statement)
         drink = result.first()
     return drink
@@ -28,7 +41,15 @@ def get_drink_by_id_from_db(id: int) -> Drink:
 
 def get_drink_by_name_from_db(name: str) -> Drink:
     with Session(engine) as session:
-        statement = select(Drink).where(Drink.name == name)
+        statement = (
+            select(Drink)
+            .where(Drink.name == name)
+            .options(
+                selectinload(Drink.ingredient_links).selectinload(
+                    DrinkIngredientLink.ingredient
+                )
+            )
+        )
         result = session.exec(statement)
         drink = result.first()
     return drink
