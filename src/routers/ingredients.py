@@ -17,13 +17,13 @@ router = APIRouter()
 @router.get(
     "/", status_code=status.HTTP_200_OK, response_model=List[IngredientResponse]
 )
-def get_ingredients():
+async def get_ingredients():
     ingredients = get_ingredients_from_db()
     return ingredients
 
 
 @router.get("/{id}", status_code=status.HTTP_200_OK, response_model=IngredientResponse)
-def get_ingredient_by_id(id: int):
+async def get_ingredient_by_id(id: int):
     ingredient = get_ingredient_by_id_from_db(id)
     if ingredient is None:
         raise HTTPException(
@@ -49,7 +49,7 @@ async def get_ingredient_by_name(name: str):
 @router.post(
     "/", status_code=status.HTTP_201_CREATED, response_model=IngredientResponse
 )
-def add_ingredient(new_ingredient: IngredientCreate):
+async def add_ingredient(new_ingredient: IngredientCreate):
     new_ingredient = create_ingredient_in_db(new_ingredient)
     if new_ingredient is None:
         raise HTTPException(
@@ -61,7 +61,7 @@ def add_ingredient(new_ingredient: IngredientCreate):
 @router.put(
     "/{id}", status_code=status.HTTP_201_CREATED, response_model=IngredientResponse
 )
-def update_ingredient(id: int, updated_ingredient: IngredientUpdate):
+async def update_ingredient(id: int, updated_ingredient: IngredientUpdate):
     ingredient = get_ingredient_by_id_from_db(id)
     if ingredient is None:
         raise HTTPException(

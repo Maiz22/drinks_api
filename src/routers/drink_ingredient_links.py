@@ -20,7 +20,7 @@ router = APIRouter()
 @router.post(
     "/", status_code=status.HTTP_201_CREATED, response_model=DrinkIngredientLinkResponse
 )
-def create_link(link: DrinkIngredientLinkCreate):
+async def create_link(link: DrinkIngredientLinkCreate):
     ingredient = get_ingredient_by_id_from_db(link.ingredient_id)
     if ingredient is None:
         raise HTTPException(
@@ -47,7 +47,7 @@ def create_link(link: DrinkIngredientLinkCreate):
     status_code=status.HTTP_201_CREATED,
     response_model=DrinkIngredientLinkResponse,
 )
-def update_link(id: int, link: DrinkIngredientLinkUpdate):
+async def update_link(id: int, link: DrinkIngredientLinkUpdate):
     link_to_be_updated = get_link_by_ids_from_db(link.ingredient_id, link.drink_id)
     if link_to_be_updated is None:
         raise HTTPException(
@@ -59,7 +59,7 @@ def update_link(id: int, link: DrinkIngredientLinkUpdate):
 
 
 @router.delete("/{drink_id}/{ingredient_id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_link(ingredient_id, drink_id):
+async def delete_link(ingredient_id, drink_id):
     link = get_link_by_ids_from_db(ingredient_id, drink_id)
     if link is None:
         raise HTTPException(
