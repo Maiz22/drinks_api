@@ -43,12 +43,14 @@ async def create_link(link: DrinkIngredientLinkCreate):
 
 
 @router.put(
-    "/{id}",
+    "/{drink_id}/{ingredient_id}",
     status_code=status.HTTP_201_CREATED,
     response_model=DrinkIngredientLinkResponse,
 )
-async def update_link(id: int, link: DrinkIngredientLinkUpdate):
-    link_to_be_updated = get_link_by_ids_from_db(link.ingredient_id, link.drink_id)
+async def update_link(
+    drink_id: int, ingredient_id: int, link: DrinkIngredientLinkUpdate
+):
+    link_to_be_updated = get_link_by_ids_from_db(ingredient_id, drink_id)
     if link_to_be_updated is None:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
