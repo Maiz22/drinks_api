@@ -40,7 +40,7 @@ def test_create_drink():
 
 
 @pytest.fixture
-def create_drink():
+def create_drink_id():
     with TestClient(app) as client:
         payload = {"name": "TestDrinkToDelete", "img_url": ""}
         response = client.post(ROUTE, json=payload)
@@ -49,9 +49,19 @@ def create_drink():
         client.delete(f"{ROUTE}/{data['id']}")
 
 
-def test_delete_drink(create_drink):
+@pytest.fixture
+def create_drink_name():
     with TestClient(app) as client:
-        response = client.delete(f"{ROUTE}/{create_drink}")
+        payload = {"name": "TestDrinkToDelete", "img_url": ""}
+        response = client.post(ROUTE, json=payload)
+        data = response.json()
+        yield data["name"]
+        client.delete(f"{ROUTE}/{data['id']}")
+
+
+def test_delete_drink(create_drink_id):
+    with TestClient(app) as client:
+        response = client.delete(f"{ROUTE}/{create_drink_id}")
         assert response.status_code == 204
 
 
@@ -72,3 +82,33 @@ def test_update_drink():
 
         # delete drink
         client.delete(f"{ROUTE}/{data['id']}")
+
+
+def test_get_drinks_success(create_drink_id):
+    with TestClient(app) as client:
+        response = client.get(f"{ROUTE}/")
+        assert response.status_code == 200
+        data = response.json()
+        assert "id" in data[0]
+        assert data[0]["name"] == "TestDrinkToDelete"
+        assert data[0]["img_url"] == ""
+
+
+def test_get_drink_by_id_success(create_drink_id):
+    with TestClient(app) as client:
+        response = client.get(f"{ROUTE}/{create_drink_id}")
+        assert response.status_code == 200
+        data = response.json()
+        assert "id" in data
+        assert data["name"] == "TestDrinkToDelete"
+        assert data["img_url"] == ""
+
+
+def test_get_drink_by_name_success(create_drink_name):
+    with TestClient(app) as client:
+        response = client.get(f"{ROUTE}/by-name/{create_drink_name}")
+        assert response.status_code == 200
+        data = response.json()
+        assert "id" in data
+        assert data["name"] == "TestDrinkToDelete"
+        assert data["img_url"] == ""

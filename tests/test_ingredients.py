@@ -41,18 +41,18 @@ def test_create_ingredient():
 
 
 @pytest.fixture
-def create_ingredient():
+def create_ingredient_id():
     with TestClient(app) as client:
-        payload = {"name": "TestToDelete", "is_available": True}
+        payload = {"name": "TestIngredientToDelete", "is_available": True}
         response = client.post(ROUTE, json=payload)
         data = response.json()
         yield data["id"]
         client.delete(f"{ROUTE}/{data['id']}")
 
 
-def test_delete_ingredient(create_ingredient):
+def test_delete_ingredient(create_ingredient_id):
     with TestClient(app) as client:
-        response = client.delete(f"{ROUTE}/{create_ingredient}")
+        response = client.delete(f"{ROUTE}/{create_ingredient_id}")
         assert response.status_code == 204
 
 
@@ -74,3 +74,43 @@ def test_update_ingredient():
 
         # delete ingredient
         client.delete(f"{ROUTE}/{data['id']}")
+
+
+@pytest.fixture
+def create_ingredient_name():
+    with TestClient(app) as client:
+        payload = {"name": "TestIngredientToDelete", "is_available": True}
+        response = client.post(ROUTE, json=payload)
+        data = response.json()
+        yield data["name"]
+        client.delete(f"{ROUTE}/{data['id']}")
+
+
+def test_get_ingredients_success(create_ingredient_id):
+    with TestClient(app) as client:
+        response = client.get(f"{ROUTE}/")
+        assert response.status_code == 200
+        data = response.json()
+        assert "id" in data[0]
+        assert data[0]["name"] == "TestIngredientToDelete"
+        assert data[0]["is_available"] is True
+
+
+def test_get_ingredient_by_id_success(create_ingredient_id):
+    with TestClient(app) as client:
+        response = client.get(f"{ROUTE}/{create_ingredient_id}")
+        assert response.status_code == 200
+        data = response.json()
+        assert "id" in data
+        assert data["name"] == "TestIngredientToDelete"
+        assert data["is_available"] is True
+
+
+def test_get_ingredient_by_name_success(create_ingredient_name):
+    with TestClient(app) as client:
+        response = client.get(f"{ROUTE}/by-name/{create_ingredient_name}")
+        assert response.status_code == 200
+        data = response.json()
+        assert "id" in data
+        assert data["name"] == "TestIngredientToDelete"
+        assert data["is_available"] is True
