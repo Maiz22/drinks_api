@@ -83,3 +83,11 @@ def delete_drink_in_db(drink: Drink) -> None:
     with Session(engine) as session:
         session.delete(drink)
         session.commit()
+
+
+def add_file_url_to_drink_in_db(drink: Drink, url: str) -> None:
+    drink.img_url = url
+    with Session(engine) as session:
+        session.add(drink)
+        session.commit()
+        session.refresh(drink)

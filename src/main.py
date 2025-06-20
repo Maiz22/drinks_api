@@ -1,7 +1,10 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
 from contextlib import asynccontextmanager
+import os
+from .config.settings import settings
 from .routers import drinks, ingredients, root, drink_ingredient_links
 from .db import create_db_and_tables
 
@@ -11,6 +14,11 @@ if TYPE_CHECKING:
 
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncGenerator[Any, Any]:
+
+    # make sure that the static/img upload dir exists
+    os.makedirs(settings.img_upload_dir, exist_ok=True)
+
+    app.mount("/static", StaticFiles(directory="static"), name="static")
 
     create_db_and_tables()
 

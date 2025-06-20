@@ -22,6 +22,7 @@ class Settings(BaseSettings):
     db_service_name: str = Field(validation_alias="POSTGRES_SERVICE_NAME")
     debug: bool = Field(validation_alias="DEBUG")
     is_dev: bool = Field(validation_alias="DEV")
+    img_upload_dir: str = Field(validation_alias="IMG_UPLOAD_DIR")
 
     class Config:
         env_file = "....env"

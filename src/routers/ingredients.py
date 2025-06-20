@@ -1,5 +1,9 @@
-from fastapi import APIRouter, status, HTTPException, Response
+from fastapi import APIRouter, status, HTTPException, Response, UploadFile
 from typing import List
+import uuid
+import os
+import shutil
+from ..config.settings import settings
 from ..schemas import IngredientCreate, IngredientResponse, IngredientUpdate
 from ..crud.ingredients import (
     get_ingredients_from_db,
@@ -8,6 +12,7 @@ from ..crud.ingredients import (
     update_ingredient_in_db,
     get_ingredient_by_name_from_db,
     delete_ingredient_in_db,
+    add_file_url_to_ingredient_in_db,
 )
 
 
@@ -82,3 +87,32 @@ async def delete_ingredient(id: int):
         )
     delete_ingredient_in_db(drink)
     return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+
+@router.post("/{id}/upload-image", status_code=status.HTTP_201_CREATED)
+def upload_image(id: int, file: UploadFile):
+
+    # check if file exists
+    ingredient = get_ingredient_by_id_from_db(id)
+    if ingredient is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Ingredient with id {id} not found",
+        )
+
+    # create a unique file name
+    ext = file.filename.split(".")[-1]
+    filename = f"{uuid.uuid4()}.{ext}"
+
+    # set the filepath to the upload dir
+    filepath = os.path.join(settings.img_upload_dir, filename)
+
+    # copy filed to filepath
+    with open(filepath, "wb") as buffer:
+        shutil.copyfileobj(file.file, buffer)
+
+    # add file to the ingredient
+    url = f"/{settings.img_upload_dir}/{filename}"
+    add_file_url_to_ingredient_in_db(ingredient, url)
+
+    return {"filename": filename, "url": url}

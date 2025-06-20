@@ -1,5 +1,9 @@
-from fastapi import APIRouter, status, HTTPException, Response
+from fastapi import APIRouter, status, HTTPException, Response, UploadFile
+import shutil
+import os
+import uuid
 from typing import List
+from ..config.settings import settings
 from ..schemas import (
     DrinkCreate,
     DrinkResponse,
@@ -14,6 +18,7 @@ from ..crud.drinks import (
     create_drink_in_db,
     update_drink_in_db,
     delete_drink_in_db,
+    add_file_url_to_drink_in_db,
 )
 
 
@@ -38,6 +43,7 @@ async def get_drinks():
                 )
                 for link in drink.ingredient_links
             ],
+            img_url=drink.img_url,
         )
         for drink in drinks
     ]
@@ -64,6 +70,7 @@ async def get_drink_by_id(id: int):
             )
             for link in drink.ingredient_links
         ],
+        img_url=drink.img_url,
     )
 
 
@@ -90,6 +97,7 @@ async def get_drink_by_name(name: str):
             )
             for link in drink.ingredient_links
         ],
+        img_url=drink.img_url,
     )
 
 
@@ -129,3 +137,32 @@ async def delete_drink(id: int):
         )
     delete_drink_in_db(drink)
     return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+
+@router.post("/{id}/upload-image", status_code=status.HTTP_201_CREATED)
+def upload_image(id: int, file: UploadFile):
+
+    # check if file exists
+    drink = get_drink_by_id_from_db(id)
+    if drink is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Drink with id {id} not found",
+        )
+
+    # create a unique file name
+    ext = file.filename.split(".")[-1]
+    filename = f"{uuid.uuid4()}.{ext}"
+
+    # set the filepath to the upload dir
+    filepath = os.path.join(settings.img_upload_dir, filename)
+
+    # copy filed to filepath
+    with open(filepath, "wb") as buffer:
+        shutil.copyfileobj(file.file, buffer)
+
+    # add file to the drink
+    url = f"/{settings.img_upload_dir}/{filename}"
+    add_file_url_to_drink_in_db(drink, url)
+
+    return {"filename": filename, "url": url}

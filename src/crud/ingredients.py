@@ -63,3 +63,11 @@ def delete_ingredient_in_db(ingredient: Ingredient) -> None:
     with Session(engine) as session:
         session.delete(ingredient)
         session.commit()
+
+
+def add_file_url_to_ingredient_in_db(ingredient: Ingredient, url: str) -> None:
+    ingredient.img_url = url
+    with Session(engine) as session:
+        session.add(ingredient)
+        session.commit()
+        session.refresh(ingredient)

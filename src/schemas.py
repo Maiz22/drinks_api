@@ -11,6 +11,7 @@ class IngredientResponse(SQLModel):
     id: int
     name: str
     is_available: bool
+    img_url: str = ""
 
 
 class IngredientUpdate(SQLModel):
@@ -23,6 +24,7 @@ class IngredientInDrinkResponse(SQLModel):
     name: str
     is_available: bool
     amount_ml: float
+    img_url: str = ""
 
 
 class DrinkCreate(SQLModel):
@@ -44,6 +46,7 @@ class DrinkResponse(SQLModel):
     id: int
     name: str
     ingredients: List[IngredientInDrinkResponse]
+    img_url: str = ""
 
 
 class DrinkIngredientLinkBase(SQLModel):
