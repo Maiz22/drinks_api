@@ -32,7 +32,7 @@ class Drink(SQLModel, table=True):
     ingredient_links: List[DrinkIngredientLink] = Relationship(
         back_populates="drink", sa_relationship_kwargs={"cascade": "all, delete"}
     )
-    img_url: str = Field(nullable=True)
+    img_url: str = Field(nullable=True, default="")
 
 
 class Ingredient(SQLModel, table=True):
@@ -43,4 +43,4 @@ class Ingredient(SQLModel, table=True):
     drink_links: List[DrinkIngredientLink] = Relationship(
         back_populates="ingredient", sa_relationship_kwargs={"cascade": "all, delete"}
     )
-    img_url: str = Field(nullable=True)
+    img_url: str = Field(nullable=True, default="")

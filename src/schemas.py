@@ -40,6 +40,7 @@ class DrinkUpdate(SQLModel):
 class SimpleDrinkResponse(SQLModel):
     id: int
     name: str
+    img_url: str = ""
 
 
 class DrinkResponse(SQLModel):
