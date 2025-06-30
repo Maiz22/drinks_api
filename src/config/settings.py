@@ -1,6 +1,7 @@
 from dotenv import load_dotenv
 from pydantic import Field
 from pydantic_settings import BaseSettings
+from pathlib import Path
 
 
 load_dotenv()
@@ -28,4 +29,8 @@ class Settings(BaseSettings):
         env_file = "....env"
 
 
+# Create a settings instance to validate and access env vars
 settings = Settings()
+
+# Create project base dir
+BASE_DIR = Path(__file__).resolve().parent.parent.parent

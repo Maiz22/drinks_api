@@ -91,3 +91,8 @@ def add_file_url_to_drink_in_db(drink: Drink, url: str) -> None:
         session.add(drink)
         session.commit()
         session.refresh(drink)
+
+
+def delete_file_from_drink_db(drink: Drink) -> None:
+    if drink.img_url.strip() == "":
+        return None

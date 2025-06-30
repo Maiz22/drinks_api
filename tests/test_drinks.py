@@ -91,7 +91,7 @@ def test_get_drinks_success(create_drink_id):
         data = response.json()
         assert "id" in data[0]
         assert data[0]["name"] == "TestDrinkToDelete"
-        assert data[0]["img_url"] == ""
+        assert data[0 ]["img_url"] == ""
 
 
 def test_get_drink_by_id_success(create_drink_id):

@@ -1,8 +1,6 @@
 from fastapi import APIRouter, status, HTTPException, Response, UploadFile
-import shutil
-import os
-import uuid
 from typing import List
+from ..utils.file_utils import save_file, delete_file
 from ..config.settings import settings
 from ..schemas import (
     DrinkCreate,
@@ -135,6 +133,8 @@ async def delete_drink(id: int):
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"Drink with id {id} not found",
         )
+    if drink.img_url.strip() != "":
+        delete_file(drink.img_url.strip())
     delete_drink_in_db(drink)
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
@@ -142,7 +142,7 @@ async def delete_drink(id: int):
 @router.post("/{id}/upload-image", status_code=status.HTTP_201_CREATED)
 def upload_image(id: int, file: UploadFile):
 
-    # check if file exists
+    # check if the drink id exists in the db
     drink = get_drink_by_id_from_db(id)
     if drink is None:
         raise HTTPException(
@@ -150,18 +150,9 @@ def upload_image(id: int, file: UploadFile):
             detail=f"Drink with id {id} not found",
         )
 
-    # create a unique file name
-    ext = file.filename.split(".")[-1]
-    filename = f"{uuid.uuid4()}.{ext}"
+    filename = save_file(file)
 
-    # set the filepath to the upload dir
-    filepath = os.path.join(settings.img_upload_dir, filename)
-
-    # copy filed to filepath
-    with open(filepath, "wb") as buffer:
-        shutil.copyfileobj(file.file, buffer)
-
-    # add file to the drink
+    # add file url to the drink db
     url = f"/{settings.img_upload_dir}/{filename}"
     add_file_url_to_drink_in_db(drink, url)
 

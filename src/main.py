@@ -2,6 +2,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
+from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 import os
 from .config.settings import settings
@@ -34,4 +35,16 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[Any, Any]:
     yield
 
 
+origins = [
+    "http://localhost:5173",
+]
+
 app = FastAPI(lifespan=lifespan)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,  # Accept requests from these origins
+    allow_credentials=True,
+    allow_methods=["*"],  # Allow all HTTP methods
+    allow_headers=["*"],  # Allow all headers
+)
