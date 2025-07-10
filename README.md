@@ -1,4 +1,4 @@
-# Drinks API
+# [Drinks API](https://github.com/Maiz22/drinks_api)
 This project is a RESTful API created as the core of an automated drink mixer or cocktail mixer. It provides the user with a simple way of adding ingredients and combining them to create long drinks and cocktails.<br>
 The project has been created using Python's FastAPI together with SQLModel as the ORM and Pydantic for data validation. PostgreSQL is used as the database system. As is standard for FastAPI applications, asynchronous request handling is managed by Python's ASGI web server implementation called Uvicorn.<br>
 Note: This project is currently still in development and has not yet been deployed on a server. To see a more detailed example of an API that includes deployment, Docker containerization, Nginx reverse proxy, caching (Redis DB), etc., please check out my [Social Media FastAPI](https://github.com/Maiz22/fastapi_post_api) project.
